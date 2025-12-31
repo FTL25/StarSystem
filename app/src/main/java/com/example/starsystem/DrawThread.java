@@ -11,16 +11,10 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.os.CountDownTimer;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.SurfaceHolder;
-
 import androidx.core.content.ContextCompat;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Random;
 
 public class DrawThread extends Thread {
     private float AU;
@@ -39,6 +33,7 @@ public class DrawThread extends Thread {
     private  boolean pause = false;
     private  int PlanetInfo = -10;
     private  int speed = -10;
+    private int updateSpeed;
     private int millisecond = 0;
     private SurfaceHolder surfaceHolder;
     private volatile boolean running = true;
@@ -298,6 +293,8 @@ public class DrawThread extends Thread {
                 }
                 millisecond = 0;
             }
+            if (millisecond == 0)
+                updateSpeed();
         }
     }
     public void requestStop() {
@@ -312,7 +309,6 @@ public class DrawThread extends Thread {
             translateX = (MIN_ZOOM - scaleFactor) * (1 / MIN_ZOOM) * viewWidth;
         else if (translateX > 0) // Левая стенка
             translateX = 0;
-
 
         if(-1 * translateY > (scaleFactor - MIN_ZOOM) * (1 / MIN_ZOOM) * viewHeight) // Нижняя стенка
             translateY = (MIN_ZOOM - scaleFactor) * (1 / MIN_ZOOM) * viewHeight;
@@ -447,7 +443,7 @@ public class DrawThread extends Thread {
                 (-translateY + viewHeight - 80)  / scaleFactor, p);
     }
     private void drawBackward(Canvas canvas, Paint p) {
-        if (speed == -3 && !pause)
+        if (updateSpeed == -3 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -458,7 +454,7 @@ public class DrawThread extends Thread {
         path.lineTo((-translateX + 260) / scaleFactor, (-translateY + viewHeight - 190)  / scaleFactor);
         canvas.drawPath(path, p);
 
-        if (speed <= -2 && !pause)
+        if (updateSpeed <= -2 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -469,7 +465,7 @@ public class DrawThread extends Thread {
         path.lineTo((-translateX + 340) / scaleFactor, (-translateY + viewHeight - 190)  / scaleFactor);
         canvas.drawPath(path, p);
 
-        if (speed <= -1 && !pause)
+        if (updateSpeed <= -1 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -482,7 +478,7 @@ public class DrawThread extends Thread {
     }
 
     private void drawForward(Canvas canvas, Paint p) {
-        if (speed >= 1 && !pause)
+        if (updateSpeed >= 1 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -494,7 +490,7 @@ public class DrawThread extends Thread {
         canvas.drawPath(path, p);
 
 
-        if (speed >= 2 && !pause)
+        if (updateSpeed >= 2 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -505,7 +501,7 @@ public class DrawThread extends Thread {
         path.lineTo((-translateX + 550) / scaleFactor, (-translateY + viewHeight - 190)  / scaleFactor);
         canvas.drawPath(path, p);
 
-        if (speed == 3 && !pause)
+        if (updateSpeed == 3 && !pause)
             p.setColor(Color.WHITE);
         else
             p.setColor(Color.argb(100, 0, 0, 0));
@@ -524,42 +520,49 @@ public class DrawThread extends Thread {
         return millisecond;
     }
 
-    public void setSpeed(int speed) {
-        this.speed = speed;
-        switch (speed){
+    public void setTempSpeed(int speed) {
+        this.updateSpeed = speed;
+    }
+    public void updateSpeed(){
+        switch (updateSpeed){
             case -3:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(-OrbitalSpeeds[i - 1] * 365);
                 }
                 break;
             case -2:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(-OrbitalSpeeds[i - 1] * 30);
                 }
                 break;
             case -1:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(-OrbitalSpeeds[i - 1]);
                 }
                 break;
             case 1:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(OrbitalSpeeds[i - 1]);
                 }
                 break;
             case 2:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(OrbitalSpeeds[i - 1] * 30);
                 }
                 break;
             case 3:
+                speed = updateSpeed;
                 for (int i = 1; i < 9; i++){
                     SpaceBodies[i].setW(OrbitalSpeeds[i - 1] * 365);
                 }
                 break;
         }
     }
-
     public double[] getOrbitalAngles() {
         double[] Angles = new double[8];
         Angles[0] = SpaceBodies[0].getW();

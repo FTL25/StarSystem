@@ -1,14 +1,9 @@
 package com.example.starsystem;
 import android.content.Context;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Calendar;
 
 public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
     private DrawThread drawThread;
@@ -19,12 +14,9 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
     private static final int NONE = 0;
     private static final int DRAG = 1;
     private static final int ZOOM = 2;
-    private boolean dragged = false;
     private int mode;
     private float startX = 0f;
     private float startY = 0f;
-    private float tempX;
-    private float tempY;
     Data AppData;
     public Data SavingData(){
         Data saveData = new Data(drawThread.getPlanetInfo(), drawThread.getSpeed(),
@@ -49,7 +41,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
         drawThread.start();
         if (AppData != null){
             drawThread.setPlanetInfo(AppData.getPlanetInfo());
-            drawThread.setSpeed(AppData.getSpeed());
+            drawThread.setTempSpeed(AppData.getSpeed());
             drawThread.setOrbitalAngles(AppData.getOrbitalAngles());
             drawThread.setDate(AppData.getDate());
             drawThread.setPause(true);
@@ -81,10 +73,6 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
         switch (event.getAction() & MotionEvent.ACTION_MASK)
         {
             case MotionEvent.ACTION_DOWN:
-                Log.i("solarX", "" + (drawThread.getTranslateX()));
-                Log.i("solarY", "" + (drawThread.getTranslateY()));
-                tempX = drawThread.getTranslateX();
-                tempY = drawThread.getTranslateY();
                 SpaceBody[] Bodies = drawThread.getSpaceBodies();
                 if ((-drawThread.getTranslateY() + drawThread.getViewHeight() - 190)  / drawThread.getScaleFactor()
                         <= (event.getY() - drawThread.getPreviousTranslateY()) / drawThread.getScaleFactor() &&
@@ -106,13 +94,13 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
                     drawThread.setPause(false);
                     switch (drawThread.getSpeed()){
                         case -1:
-                            drawThread.setSpeed(-2);
+                            drawThread.setTempSpeed(-2);
                             break;
                         case -2:
-                            drawThread.setSpeed(-3);
+                            drawThread.setTempSpeed(-3);
                             break;
                         default:
-                            drawThread.setSpeed(-1);
+                            drawThread.setTempSpeed(-1);
                             break;
                     }
                 } else if ((-drawThread.getTranslateY() + drawThread.getViewHeight() - 190)  / drawThread.getScaleFactor()
@@ -126,13 +114,13 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
                     drawThread.setPause(false);
                     switch (drawThread.getSpeed()){
                         case 1:
-                            drawThread.setSpeed(2);
+                            drawThread.setTempSpeed(2);
                             break;
                         case 2:
-                            drawThread.setSpeed(3);
+                            drawThread.setTempSpeed(3);
                             break;
                         default:
-                            drawThread.setSpeed(1);
+                            drawThread.setTempSpeed(1);
                             break;
                     }
                 } else if (drawThread.getPlanetInfo() >= 0 &&
@@ -141,7 +129,7 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
                     drawThread.setPlanetInfo(-1);
                 } else {
                     mode = DRAG;
-                    Log.e("solar", "");
+
                     startX = event.getX() - drawThread.getPreviousTranslateX();
                     startY = event.getY() - drawThread.getPreviousTranslateY();
                 }
@@ -184,8 +172,6 @@ public class DrawView extends SurfaceView implements SurfaceHolder.Callback {
         public boolean onScale(ScaleGestureDetector detector)
         {
             mode = ZOOM;
-
-            Log.d("solarDetect", "" + (detector.getScaleFactor()));
 
             if (drawThread.getScaleFactor() * detector.getScaleFactor() < MAX_ZOOM){
                 drawThread.setScaleFactor(Math.max(MIN_ZOOM, drawThread.getScaleFactor() * detector.getScaleFactor()));

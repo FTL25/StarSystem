@@ -1,15 +1,7 @@
 package com.example.starsystem;
 
-import android.graphics.Matrix;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.ScaleGestureDetector;
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
     final static String SavingKey = "APP_STATUS";
