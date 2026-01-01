@@ -33,7 +33,7 @@ public class DrawThread extends Thread {
     private  boolean pause = false;
     private  int PlanetInfo = -10;
     private  int speed = -10;
-    private int updateSpeed;
+    private int updateSpeed = -10;
     private int millisecond = 0;
     private SurfaceHolder surfaceHolder;
     private volatile boolean running = true;
@@ -167,8 +167,12 @@ public class DrawThread extends Thread {
 
         if (PlanetInfo == -10)
             PlanetInfo = -1;
-        if (speed == -10)
+        if (updateSpeed == -10){
             speed = 1;
+            updateSpeed = 1;
+        }
+        else
+            updateSpeed();
 
         if (OrbitalAngles == null){
             OrbitalAngles = new double[8];
