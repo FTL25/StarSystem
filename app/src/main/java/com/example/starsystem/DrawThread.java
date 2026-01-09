@@ -29,7 +29,7 @@ public class DrawThread extends Thread {
     private  float previousTranslateY;
     private  float scaleFactor = (float) 1 / 10;
     private Bitmap background;
-    private  final int timerInterval = 30;
+    private  final int timerInterval = 50;
     private  boolean pause = false;
     private  int PlanetInfo = -10;
     private  int speed = -10;
@@ -270,7 +270,7 @@ public class DrawThread extends Thread {
     }
     protected void update() { // Обновление значений переменных
         if(!pause){
-            millisecond += 30;
+            millisecond += timerInterval;
             for (int i = 0; i < 9; i++){
                 SpaceBodies[i].update(timerInterval);
             }
